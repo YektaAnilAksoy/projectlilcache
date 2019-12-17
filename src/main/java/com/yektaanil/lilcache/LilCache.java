@@ -1,4 +1,4 @@
-package com.yektaanilaksoy.lilcache;
+package com.yektaanil.lilcache;
 
 import com.yektaanil.lilcache.entity.LilCachiableObject;
 import java.lang.ref.SoftReference;
