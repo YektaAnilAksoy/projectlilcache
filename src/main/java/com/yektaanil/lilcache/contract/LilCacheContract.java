@@ -1,14 +1,16 @@
 package com.yektaanil.lilcache.contract;
 
 public interface LilCacheContract<K, V>
-{
-    void put(final K p0, final V p1);
+{	
+    void put(final K key, final V value);
     
-    V get(final K p0);
+    V get(final K key);
     
-    void remove(final K p0);
+    void remove(final K key);
     
     int size();
     
-    void cleanUp();
+    boolean containsKey(final K key);
+    
+    void clear();
 }

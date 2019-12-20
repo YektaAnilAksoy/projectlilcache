@@ -4,10 +4,12 @@ import com.yektaanil.lilcache.entity.LilCachiableObject;
 import java.lang.ref.SoftReference;
 import org.apache.commons.collections4.map.LRUMap;
 import java.io.Serializable;
-import com.yektaanil.lilcache.contract.LilCacheContract;
 
-public class LilCache<K, V> implements LilCacheContract<K, V>, Serializable
+import com.yektaanil.lilcache.contract.AbstractLilCacheContract;
+
+public class LilCache<K, V> extends AbstractLilCacheContract<K, V> implements Serializable
 {
+
     private static final long serialVersionUID = 8602315778724460754L;
     private boolean isTimerActive;
     private LRUMap<K, SoftReference<LilCachiableObject<V>>> lilCacheMap;
@@ -25,7 +27,7 @@ public class LilCache<K, V> implements LilCacheContract<K, V>, Serializable
             		} catch(InterruptedException ex) {
             			ex.printStackTrace();
             		}
-            		cleanUp();
+            		clear();
             	}
             });
             cleanerCaller.setDaemon(true);
@@ -69,7 +71,7 @@ public class LilCache<K, V> implements LilCacheContract<K, V>, Serializable
         }
     }
     
-    public void cleanUp() {
+    public void clear() {
     }
     
     public boolean isTimerActive() {
@@ -79,4 +81,15 @@ public class LilCache<K, V> implements LilCacheContract<K, V>, Serializable
     public void setTimerActive(final boolean isTimerActive) {
         this.isTimerActive = isTimerActive;
     }
+
+	public double getHitRatio() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public boolean containsKey(K key) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }
