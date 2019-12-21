@@ -1,10 +1,9 @@
 package com.yektaanil.lilcache;
 
-import com.yektaanil.lilcache.entity.LilCachiableObject;
-import java.lang.ref.SoftReference;
-import org.apache.commons.collections4.map.LRUMap;
 import java.io.Serializable;
 
+import com.yektaanil.lilcache.collection.CachePolicy;
+import com.yektaanil.lilcache.collection.PolicyFactory;
 import com.yektaanil.lilcache.contract.AbstractLilCacheContract;
 
 public class LilCache<K, V> extends AbstractLilCacheContract<K, V> implements Serializable
@@ -12,11 +11,17 @@ public class LilCache<K, V> extends AbstractLilCacheContract<K, V> implements Se
 
     private static final long serialVersionUID = 8602315778724460754L;
     private boolean isTimerActive;
-    private LRUMap<K, SoftReference<LilCachiableObject<V>>> lilCacheMap;
+   
+    private AbstractLilCacheContract<K, V> lilCache;
     
-    public LilCache(final long cleanUpTimerInSecond, final int maxSize) {
+    public LilCache(CachePolicy policy, final int maxSize) {
+    	lilCache = PolicyFactory.getPolicy(policy, maxSize);
+    	
+    }
+    
+    /*  public LilCache(final long cleanUpTimerInSecond, final int maxSize) {
         isTimerActive = true;
-        lilCacheMap = new LRUMap<K, SoftReference<LilCachiableObject<V>>>(maxSize);
+        
         
         if (cleanUpTimerInSecond > 0L) {
             final long cleanUpTimerInMilliSecond = cleanUpTimerInSecond * 1000L;
@@ -32,46 +37,28 @@ public class LilCache<K, V> extends AbstractLilCacheContract<K, V> implements Se
             });
             cleanerCaller.setDaemon(true);
             cleanerCaller.start();
-        }
-    }
+        } 
+    } */
     
     public void put(final K key, final V value) {
-        synchronized (lilCacheMap) {
-            lilCacheMap.put(key, new SoftReference<LilCachiableObject<V>>(new LilCachiableObject<V>(value)));
-        }
-
+    	lilCache.put(key, value);
     }
     
-    @SuppressWarnings("unchecked")
-	public V get(final K key) {
-        synchronized (lilCacheMap) {
-            final SoftReference<LilCachiableObject<V>> lilCache = (SoftReference<LilCachiableObject<V>>)this.lilCacheMap.get(key);
-            
-            if (lilCache == null) {
-                return null;
-            }
-            
-            lilCache.get().setLastAccessed(System.currentTimeMillis());
-            final Object value = lilCache.get().getValue();
 
-            return (V)value;
-        }
+	public V get(final K key) {
+		return lilCache.get(key);
     }
     
     public void remove(final K key) {
-        synchronized (lilCacheMap) {
-            lilCacheMap.remove(key);
-        }
-
+    	lilCache.remove(key);
     }
     
     public int size() {
-        synchronized (lilCacheMap) {
-            return lilCacheMap.size();
-        }
+		return lilCache.size();  	
     }
     
     public void clear() {
+    	lilCache.clear();
     }
     
     public boolean isTimerActive() {
@@ -83,13 +70,11 @@ public class LilCache<K, V> extends AbstractLilCacheContract<K, V> implements Se
     }
 
 	public double getHitRatio() {
-		// TODO Auto-generated method stub
-		return 0;
+		return lilCache.getHitRatio();
 	}
 
 	public boolean containsKey(K key) {
-		// TODO Auto-generated method stub
-		return false;
+		return lilCache.containsKey(key);
 	}
 
 }

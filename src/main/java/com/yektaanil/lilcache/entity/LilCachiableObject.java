@@ -2,13 +2,13 @@ package com.yektaanil.lilcache.entity;
 
 import java.io.Serializable;
 
-public class LilCachiableObject<T> implements Serializable
+public class LilCachiableObject<V> implements Serializable
 {
     private static final long serialVersionUID = 1L;
     private long lastAccessed;
-    private T value;
+    private V value;
     
-    public LilCachiableObject(final T value) {
+    public LilCachiableObject(final V value) {
         this.value = value;
         this.lastAccessed = System.currentTimeMillis();
     }
@@ -21,11 +21,11 @@ public class LilCachiableObject<T> implements Serializable
         this.lastAccessed = lastAccessed;
     }
     
-    public T getValue() {
+    public V getValue() {
         return this.value;
     }
     
-    public void setValue(final T value) {
+    public void setValue(final V value) {
         this.value = value;
     }
 }

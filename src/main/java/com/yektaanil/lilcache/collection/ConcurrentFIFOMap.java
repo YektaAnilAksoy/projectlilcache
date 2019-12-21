@@ -1,10 +1,14 @@
 package com.yektaanil.lilcache.collection;
 
 
+import java.io.Serializable;
+
 import com.yektaanil.lilcache.contract.AbstractLilCacheContract;
 
-class ConcurrentFIFOMap<K, V> extends AbstractLilCacheContract<K, V>{
+class ConcurrentFIFOMap<K, V> extends AbstractLilCacheContract<K, V> implements Serializable, Cloneable {
 
+	private static final long serialVersionUID = -6987974867787182515L;
+	
 	private FIFOMap<K, V> fifoMap;
 	
 	
