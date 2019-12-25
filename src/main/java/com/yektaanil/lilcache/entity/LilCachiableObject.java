@@ -17,11 +17,12 @@ public class LilCachiableObject<V> implements Serializable
         return this.lastAccessed;
     }
     
-    public void setLastAccessed(final long lastAccessed) {
+    private void setLastAccessed(final long lastAccessed) {
         this.lastAccessed = lastAccessed;
     }
     
     public V getValue() {
+    	setLastAccessed(System.currentTimeMillis());
         return this.value;
     }
     

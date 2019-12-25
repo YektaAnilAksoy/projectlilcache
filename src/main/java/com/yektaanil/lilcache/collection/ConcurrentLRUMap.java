@@ -23,25 +23,13 @@ class ConcurrentLRUMap<K, V> extends AbstractLilCacheContract<K, V> implements S
         synchronized (lruMap) {
         	lruMap.put(key, new SoftReference<LilCachiableObject<V>>(new LilCachiableObject<V>(value)));
         }
-
 	}
 
 
 	public V get(final K key) {     
 		synchronized (lruMap) {
-        	super.incrementNumOfCalls();
-            final SoftReference<LilCachiableObject<V>> cachedData = (SoftReference<LilCachiableObject<V>>)this.lruMap.get(key);
-            
-            if (cachedData == null) {
-                return null;
-            }
-            
-            super.incrementNumOfHits();
-            
-            cachedData.get().setLastAccessed(System.currentTimeMillis());         
-            final V value = cachedData.get().getValue();
-
-            return value;
+            final SoftReference<LilCachiableObject<V>> cachedData = (SoftReference<LilCachiableObject<V>>)this.lruMap.get(key); 
+            return cachedData.get().getValue();
         }
 	}
 
@@ -66,8 +54,9 @@ class ConcurrentLRUMap<K, V> extends AbstractLilCacheContract<K, V> implements S
 	public void clear() {
 		synchronized (lruMap) {
 			lruMap.clear();
-		}
-		
+		}	
 	}
+	
+	
 
 }

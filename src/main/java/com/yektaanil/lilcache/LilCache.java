@@ -46,7 +46,15 @@ public class LilCache<K, V> extends AbstractLilCacheContract<K, V> implements Se
     
 
 	public V get(final K key) {
-		return lilCache.get(key);
+		lilCache.incrementNumOfCalls();
+		
+		final V cachedData = lilCache.get(key);
+		
+		if(cachedData != null) {
+			lilCache.incrementNumOfHits();
+		}
+				
+		return cachedData;
     }
     
     public void remove(final K key) {
