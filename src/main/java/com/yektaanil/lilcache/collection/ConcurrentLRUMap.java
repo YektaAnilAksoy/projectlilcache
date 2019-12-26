@@ -3,7 +3,6 @@ package com.yektaanil.lilcache.collection;
 import java.io.Serializable;
 import java.lang.ref.SoftReference;
 
-
 import org.apache.commons.collections4.map.LRUMap;
 
 import com.yektaanil.lilcache.contract.AbstractLilCacheContract;
@@ -29,7 +28,8 @@ class ConcurrentLRUMap<K, V> extends AbstractLilCacheContract<K, V> implements S
 	public V get(final K key) {     
 		synchronized (lruMap) {
             final SoftReference<LilCachiableObject<V>> cachedData = (SoftReference<LilCachiableObject<V>>)this.lruMap.get(key); 
-            return cachedData.get().getValue();
+            
+            return cachedData == null ? null : cachedData.get().getValue();
         }
 	}
 
