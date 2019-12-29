@@ -1,22 +1,39 @@
 package com.yektaanil.lilcache;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import com.yektaanil.lilcache.collection.CachePolicy;
 import com.yektaanil.lilcache.collection.PolicyFactory;
 import com.yektaanil.lilcache.contract.AbstractLilCacheContract;
+import com.yektaanil.lilcache.entity.LilCacheConfiguration;
+import com.yektaanil.lilcache.entity.LilCachiableObject;
 
-public class LilCache<K, V> extends AbstractLilCacheContract<K, V> implements Serializable
+/**
+ * LilCache is a controller class that keeps the logic inside it for 
+ * various cache algorithms @see {@code ConcurrentFIFOMap} {@code ConcurrentLFUMap} {@code ConcurrentLRUMap}
+ * 
+ * @author Yekta Anil Aksoy
+ * @param <K> key
+ * @param <V> value
+ */
+public final class LilCache<K, V> extends AbstractLilCacheContract<K, V> implements Serializable
 {
 
     private static final long serialVersionUID = 8602315778724460754L;
-    private boolean isTimerActive;
-   
-    private AbstractLilCacheContract<K, V> lilCache;
+    private AbstractLilCacheContract<K, LilCachiableObject<V>> lilCache;
+    private LilCacheConfiguration configuration;
     
-    public LilCache(CachePolicy policy, final int maxSize) {
-    	lilCache = PolicyFactory.getPolicy(policy, maxSize);
-    	
+    /**
+     * @param cacheName the cache identifier (must not be {@code null})
+     * @param policy indicates the replacement algorithm
+     * @throws {@code NullPointerException} if cacheName is null.
+     */
+    public LilCache(final String cacheName,final CachePolicy policy, final int maxSize) {
+    	configuration.setCacheName(Objects.requireNonNull(cacheName));
+    	configuration.setPolicy(policy);
+    	configuration.setMaxSize(maxSize);
+    	lilCache = PolicyFactory.getPolicy(policy, maxSize);	
     }
     
     /*  public LilCache(final long cleanUpTimerInSecond, final int maxSize) {
@@ -41,20 +58,21 @@ public class LilCache<K, V> extends AbstractLilCacheContract<K, V> implements Se
     } */
     
     public void put(final K key, final V value) {
-    	lilCache.put(key, value);
+    	final LilCachiableObject<V> lilCachiableData = new LilCachiableObject<V>(value);
+    	lilCache.put(key, lilCachiableData);
     }
     
 
 	public V get(final K key) {
 		lilCache.incrementNumOfCalls();
 		
-		final V cachedData = lilCache.get(key);
+		final LilCachiableObject<V> cachedData = lilCache.get(key);
 		
-		if(cachedData != null) {
+		if(cachedData.getValue() != null) {
 			lilCache.incrementNumOfHits();
 		}
 				
-		return cachedData;
+		return cachedData.getValue();
     }
     
     public void remove(final K key) {
@@ -69,14 +87,6 @@ public class LilCache<K, V> extends AbstractLilCacheContract<K, V> implements Se
     	lilCache.clear();
     }
     
-    public boolean isTimerActive() {
-        return this.isTimerActive;
-    }
-    
-    public void setTimerActive(final boolean isTimerActive) {
-        this.isTimerActive = isTimerActive;
-    }
-
 	public double getHitRatio() {
 		return lilCache.getHitRatio();
 	}
@@ -85,4 +95,12 @@ public class LilCache<K, V> extends AbstractLilCacheContract<K, V> implements Se
 		return lilCache.containsKey(key);
 	}
 
+	public LilCacheConfiguration getConfiguration() {
+		return configuration;
+	}
+
+	public void setConfiguration(LilCacheConfiguration cacheConfig) {
+		this.configuration = cacheConfig;
+	}
+	
 }

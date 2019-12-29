@@ -4,7 +4,7 @@ public abstract class AbstractLilCacheContract<K, V> implements LilCacheContract
 
 	private long numOfHits = 0;
 	private long numOfCalls = 0;
-	private boolean isNullValueAllowed = true;
+
 	
 	public double getHitRatio() {		
 		return (double) numOfHits  / numOfCalls;		
@@ -20,15 +20,5 @@ public abstract class AbstractLilCacheContract<K, V> implements LilCacheContract
     	synchronized(this) {
     		numOfCalls++;
     	}
-    }
-
-	public boolean isNullValueAllowed() {
-		return isNullValueAllowed;
-	}
-
-	public void setNullValueAllowed(boolean isNullValueAllowed) {
-		this.isNullValueAllowed = isNullValueAllowed;
-	}
-    
-    
+    }   
 }

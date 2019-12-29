@@ -28,7 +28,7 @@ public class ConcurrentLRUMapTest extends TestCase
 	protected void setUp() 
 	{
 		LOG.info("Test LRU Cache with maxSize: 3 is getting filled up with 3 items...");
-		cache = new LilCache<String, Integer>(CachePolicy.LRU,3);
+		cache = new LilCache<String, Integer>("LRUCache",CachePolicy.LRU,3);
         cache.put("user1", 1);
         cache.put("user2", 2);
         cache.put("user3", 3);
