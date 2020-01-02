@@ -8,7 +8,6 @@ import com.yektaanil.lilcache.LilCache;
 import com.yektaanil.lilcache.collection.CachePolicy;
 import com.yektaanil.lilcache.collection.PolicyFactory;
 
-import jdk.internal.org.jline.utils.Log;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;

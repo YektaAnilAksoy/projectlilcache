@@ -30,9 +30,9 @@ public final class LilCache<K, V> extends AbstractLilCacheContract<K, V> impleme
      * @throws {@code NullPointerException} if cacheName is null.
      */
     public LilCache(final String cacheName,final CachePolicy policy, final int maxSize) {
-    	configuration.setCacheName(Objects.requireNonNull(cacheName));
-    	configuration.setPolicy(policy);
-    	configuration.setMaxSize(maxSize);
+    	//configuration.setCacheName(Objects.requireNonNull(cacheName));
+    	//configuration.setPolicy(policy);
+    	//configuration.setMaxSize(maxSize);
     	lilCache = PolicyFactory.getPolicy(policy, maxSize);	
     }
     
@@ -58,8 +58,7 @@ public final class LilCache<K, V> extends AbstractLilCacheContract<K, V> impleme
     } */
     
     public void put(final K key, final V value) {
-    	final LilCachiableObject<V> lilCachiableData = new LilCachiableObject<V>(value);
-    	lilCache.put(key, lilCachiableData);
+    	lilCache.put(key, new LilCachiableObject<V>(value));
     }
     
 
@@ -68,11 +67,11 @@ public final class LilCache<K, V> extends AbstractLilCacheContract<K, V> impleme
 		
 		final LilCachiableObject<V> cachedData = lilCache.get(key);
 		
-		if(cachedData.getValue() != null) {
+		if(cachedData != null) {
 			lilCache.incrementNumOfHits();
+			return cachedData.getValue();
 		}
-				
-		return cachedData.getValue();
+		return null;
     }
     
     public void remove(final K key) {
