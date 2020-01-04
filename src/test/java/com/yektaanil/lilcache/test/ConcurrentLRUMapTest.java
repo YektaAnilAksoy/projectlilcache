@@ -1,4 +1,4 @@
-package com.yektaanil.projectlilcache;
+package com.yektaanil.lilcache.test;
 
 
 import org.slf4j.Logger;
@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import com.yektaanil.lilcache.LilCache;
 import com.yektaanil.lilcache.collection.CachePolicy;
 import com.yektaanil.lilcache.collection.PolicyFactory;
+import com.yektaanil.lilcache.manager.LilCacheManager;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -26,8 +27,10 @@ public class ConcurrentLRUMapTest extends TestCase
 	 */
 	protected void setUp() 
 	{
+		//LilCacheManager cacheManager = LilCacheManager.getInstance();
+		
 		LOG.info("Test LRU Cache with maxSize: 3 is getting filled up with 3 items...");
-		cache = new LilCache<String, Integer>("LRUCache",CachePolicy.LRU,3);
+		cache = new LilCache("LRUCache",CachePolicy.LRU,3);
         cache.put("user1", 1);
         cache.put("user2", 2);
         cache.put("user3", 3);

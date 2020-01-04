@@ -3,7 +3,13 @@ package com.yektaanil.lilcache.manager;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.yektaanil.lilcache.LilCache;
+import com.yektaanil.lilcache.collection.PolicyFactory;
+import com.yektaanil.lilcache.exception.CacheNotFoundException;
+
 
 /**
  * 
@@ -12,6 +18,8 @@ import com.yektaanil.lilcache.LilCache;
  */
 public abstract class AbstractLilCacheManager implements CacheManager {
 
+	private static final Logger LOG = LoggerFactory.getLogger(PolicyFactory.class);
+	
 	/**
 	 * cacheMap keeps all the alive caches inside it.
 	 */
@@ -38,24 +46,11 @@ public abstract class AbstractLilCacheManager implements CacheManager {
 		return cacheMap.keySet().toArray(cacheNameArray);
 	}
 	
-	/**
-	 * Checks whether the cache manager has the cache or not
-	 * 
-	 * @param cacheName indicates the related cache.
-	 * 
-	 * @return true if the cache manager contains the cache; otherwise false.
-	 */
 	@Override
 	public boolean containsCache(String cacheName) {
 		return cacheMap.containsKey(cacheName);
 	}
 	
-	/**
-	 * Removes the cache related with the given cacheName.
-	 * It should be kept in mind that when this method runs, it destroys
-	 * all caches in the cache manager.
-	 * This operation cannot be undone.
-	 */
 	@Override
 	public void removeAll() {
 		String[] cacheNames = getCacheNames();
@@ -64,34 +59,39 @@ public abstract class AbstractLilCacheManager implements CacheManager {
 		}
 	}
 	
-	/**
-	 * Removes the cache related with the given cacheName from the cache manager.
-	 * 
-	 * @param cacheName indicates the related cache.
-	 */
 	@Override
 	public void removeCache(String cacheName) {
 		
 	}
 	
-	/**
-	 * Clears all the caches inside the manager.
-	 */
+	@Override
+	public void addCache(String cacheName, LilCache<?, ?> cache) {
+		LOG.info("A cache with name: "+cacheName+" is added to the cache manager.");
+		cacheMap.put(cacheName, cache);
+	}
+	
+
 	@Override
 	public void clearAll() {
-		// TODO Auto-generated method stub
+		String[] cacheNames = getCacheNames();
 		
+		synchronized (cacheMap) {
+			for(String name : cacheNames) {
+				clearCache(name);
+				LOG.info("Cache -"+name+"- is successfully cleared.");
+			}
+		}
 	}
 	
-	/**
-	 * Clears the cache associated with given cacheName
-	 * 
-	 * @param cacheName indicates the related cache.
-	 */
 	@Override
 	public void clearCache(String cacheName) {
-		cacheMap.get(cacheName).clear();
+		synchronized (cacheMap) {
+			if(containsCache(cacheName)) {
+				cacheMap.get(cacheName).clear();
+			}
+			else {
+				throw new CacheNotFoundException("There is no cache in the cache manager with provided cache name - " + cacheName);
+			}
+		}
 	}
-	
-	
 }

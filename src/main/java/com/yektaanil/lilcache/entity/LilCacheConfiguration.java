@@ -14,6 +14,12 @@ public final class LilCacheConfiguration implements Cloneable {
 	public LilCacheConfiguration() {
 	}
 	
+	public LilCacheConfiguration(String cacheName, CachePolicy policy, int maxSize) {
+		this.cacheName = cacheName;
+		this.policy = policy;
+		this.maxSize = maxSize;
+	}
+
 	public boolean isTimeToLiveActive() {
 		return isTimeToLiveActive;
 	}

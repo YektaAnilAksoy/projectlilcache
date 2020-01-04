@@ -1,13 +1,13 @@
 package com.yektaanil.lilcache;
 
 import java.io.Serializable;
-import java.util.Objects;
 
 import com.yektaanil.lilcache.collection.CachePolicy;
 import com.yektaanil.lilcache.collection.PolicyFactory;
 import com.yektaanil.lilcache.contract.AbstractLilCacheContract;
 import com.yektaanil.lilcache.entity.LilCacheConfiguration;
 import com.yektaanil.lilcache.entity.LilCachiableObject;
+import com.yektaanil.lilcache.manager.LilCacheManager;
 
 /**
  * LilCache is a controller class that keeps the logic inside it for 
@@ -30,10 +30,10 @@ public final class LilCache<K, V> extends AbstractLilCacheContract<K, V> impleme
      * @throws {@code NullPointerException} if cacheName is null.
      */
     public LilCache(final String cacheName,final CachePolicy policy, final int maxSize) {
-    	//configuration.setCacheName(Objects.requireNonNull(cacheName));
-    	//configuration.setPolicy(policy);
-    	//configuration.setMaxSize(maxSize);
-    	lilCache = PolicyFactory.getPolicy(policy, maxSize);	
+    	configuration = new LilCacheConfiguration(cacheName,policy,maxSize);
+    	lilCache = PolicyFactory.getPolicy(policy, maxSize);
+    	// it prevents to add the cache into the cache manager manually each time a cache created
+    	LilCacheManager.getInstance().addCache(cacheName, this);
     }
     
     /*  public LilCache(final long cleanUpTimerInSecond, final int maxSize) {

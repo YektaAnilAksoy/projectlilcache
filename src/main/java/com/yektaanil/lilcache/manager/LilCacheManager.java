@@ -24,11 +24,12 @@ public class LilCacheManager extends AbstractLilCacheManager {
 	 * 
 	 * @returns the shared singleton cache manager.
 	 */
-	synchronized public static LilCacheManager getManager() {
+	synchronized public static LilCacheManager getInstance() {
 		if (singleton == null) {
 			// if instance is null, initialize
 			singleton = new LilCacheManager();
 		}
 		return singleton;
 	}
+
 }
